@@ -24,6 +24,14 @@ module.exports = {
       order: {
         type: Sequelize.INTEGER
       },
+      promote: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
+      priceDiscount: {
+        type: Sequelize.DOUBLE,
+        defaultValue: 0.0
+      },
       availability: {
         type: Sequelize.BOOLEAN
       },

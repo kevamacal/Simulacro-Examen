@@ -39,6 +39,8 @@ const show = async function (req, res) {
 const create = async function (req, res) {
   let newProduct = Product.build(req.body)
   try {
+    const restaurant = await Restaurant.findByPk(newProduct.restaurantId)
+    newProduct.priceDiscount = newProduct.price - newProduct.price * restaurant.discount / 100
     newProduct = await newProduct.save()
     res.json(newProduct)
   } catch (err) {
@@ -107,12 +109,25 @@ const popular = async function (req, res) {
   }
 }
 
+const promote = async function (req, res) {
+  try {
+    const product = await Product.findByPk(req.params.productId)
+    const restaurant = await Restaurant.findByPk(product.restaurantId)
+    await Product.update({ promote: !product.promote, priceDiscount: product.price - product.price * restaurant.discount / 100 }, { where: { id: req.params.productId } })
+    const productFinal = await Product.findByPk(req.params.productId)
+    res.json(productFinal)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+}
+
 const ProductController = {
   indexRestaurant,
   show,
   create,
   update,
   destroy,
-  popular
+  popular,
+  promote
 }
 export default ProductController
